@@ -35,6 +35,8 @@ func (l *Link) String() string {
 	}
 	if l.Err != nil {
 		parts = append(parts, l.Err.Error())
+	} else {
+		parts = append(parts, "OK")
 	}
 	return strings.Join(parts, "\t")
 }
