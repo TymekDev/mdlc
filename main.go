@@ -13,6 +13,21 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
+// TODO:
+// - przyjmuję listę plików
+// - dla każdego pliku znajduję wszystkie linki
+// - w zależności od trybu:
+//     - count: tylko zlicza
+//     - check: sprawdza status code
+//     - vet: sprawdza czy linki prowadzą do redirectów
+//     - domyślnie wszystkie: --check --count --vet
+// - output:
+//	  - posortowany (chyba, że --no-sort)
+//	  - z podziałem na pliki (chyba, że --no-group ~do wymyślenia inna nazwa)
+//    - format=json/pretty
+// - epic:
+//	  - --fix dla tych rzeczy, które --vet znajduje
+
 var (
 	version  string
 	fVersion bool
@@ -39,15 +54,16 @@ func main() {
 
 	// Check and count URLs
 	unique := Links{}
-	m := map[string]*Link{}
+	m := map[string]int{}
 	for _, link := range all {
-		if _, ok := m[link.URL]; ok {
-			m[link.URL].Count++
+		if idx, ok := m[link.URL]; ok {
+			unique[idx].Count++
 			continue
 		}
 
+		m[link.URL] = len(unique)
 		unique = append(unique, link)
-		m[link.URL] = link
+
 		resp, err := http.Head(link.URL)
 		if err != nil {
 			link.Err = err
