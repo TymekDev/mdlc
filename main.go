@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"sync"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -37,6 +38,8 @@ func main() {
 	}
 
 	// Check and count URLs
+	mu := sync.Mutex{}
+	wg := sync.WaitGroup{}
 	unique := Links{}
 	m := map[string]int{}
 	for _, link := range all {
@@ -48,16 +51,24 @@ func main() {
 		m[link.URL] = len(unique)
 		unique = append(unique, link)
 
-		resp, err := http.Head(link.URL)
-		if err != nil {
-			link.Err = err
-			continue
-		}
-		link.StatusCode = resp.StatusCode
-		if url := resp.Request.URL.String(); url != link.URL {
-			link.Err = fmt.Errorf("indirect URL to: %s", url)
-		}
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			link := unique[i]
+			resp, err := http.Head(link.URL)
+			defer mu.Unlock()
+			mu.Lock()
+			if err != nil {
+				link.Err = err
+				return
+			}
+			link.StatusCode = resp.StatusCode
+			if url := resp.Request.URL.String(); url != link.URL {
+				link.Err = fmt.Errorf("indirect URL to: %s", url)
+			}
+		}(len(unique) - 1)
 	}
+	wg.Wait()
 
 	sort.Slice(unique, func(i, j int) bool {
 		return unique[i].Less(unique[j])
@@ -88,6 +99,7 @@ func parseFileForLinks(filename string) (Links, error) {
 	document := goldmark.DefaultParser().Parse(text.NewReader(b))
 	if err := ast.Walk(document, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		// PERF: this could skip some nodes
+		// FIX: link aliases make them counted twice
 		if link, ok := n.(*ast.Link); ok {
 			links = append(links, &Link{FileName: filename, URL: string(link.Destination), Count: 1})
 		}
