@@ -1,6 +1,7 @@
-# mdlsc
+# mdlc
 
-mdlsc parses a markdown file for all links and checks their status using a HTTP HEAD request.
+mdlc scans markdown files for links and checks their status using a HTTP HEAD request.
+This includes checking both, status code and any redirects.
 
 ## Name
-\[M\]ark\[d\]own \[l\]ink \[s\]tatus \[c\]hecker.
+\[M\]ark\[d\]own \[l\]ink \[c\]hecker.

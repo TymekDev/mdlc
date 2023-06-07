@@ -23,12 +23,12 @@ func main() {
 	log.SetFlags(0)
 
 	if version != "" {
-		flag.BoolVar(&fVersion, "version", false, "version for mdlsc")
+		flag.BoolVar(&fVersion, "version", false, "version for mdlc")
 	}
 	flag.Parse()
 
 	if fVersion {
-		fmt.Printf("mdlsc version %s\n", version)
+		fmt.Printf("mdlc version %s\n", version)
 		return
 	}
 
