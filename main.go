@@ -43,8 +43,8 @@ func main() {
 	flag.Parse()
 
 	if fVersion {
-		log.Println("mdlsc version", version)
-		os.Exit(0)
+		fmt.Printf("mdlsc version %s\n", version)
+		return
 	}
 
 	all, err := parseFilesForLinks(flag.Args())
@@ -79,7 +79,7 @@ func main() {
 		return unique[i].Less(unique[j])
 	})
 
-	log.Println(unique)
+	fmt.Println(unique)
 }
 
 func parseFilesForLinks(filenames []string) (Links, error) {
