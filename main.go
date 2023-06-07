@@ -13,27 +13,11 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-// TODO:
-// - przyjmuję listę plików
-// - dla każdego pliku znajduję wszystkie linki
-// - w zależności od trybu:
-//     - count: tylko zlicza
-//     - check: sprawdza status code
-//     - vet: sprawdza czy linki prowadzą do redirectów
-//     - domyślnie wszystkie: --check --count --vet
-// - output:
-//	  - posortowany (chyba, że --no-sort)
-//	  - z podziałem na pliki (chyba, że --no-group ~do wymyślenia inna nazwa)
-//    - format=json/pretty
-// - epic:
-//	  - --fix dla tych rzeczy, które --vet znajduje
-
 var (
 	version  string
 	fVersion bool
 )
 
-// TODO: add cobra for completions
 func main() {
 	log.SetFlags(0)
 
