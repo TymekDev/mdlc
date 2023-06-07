@@ -97,13 +97,16 @@ func parseFileForLinks(filename string) (Links, error) {
 
 	links := Links{}
 	document := goldmark.DefaultParser().Parse(text.NewReader(b))
-	if err := ast.Walk(document, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		// PERF: this could skip some nodes
-		// FIX: link aliases make them counted twice
-		if link, ok := n.(*ast.Link); ok {
-			links = append(links, &Link{FileName: filename, URL: string(link.Destination), Count: 1})
+	if err := ast.Walk(document, func(n ast.Node, enter bool) (ast.WalkStatus, error) {
+		if !enter {
+			return ast.WalkContinue, nil
 		}
-		return ast.WalkContinue, nil
+		link, ok := n.(*ast.Link)
+		if !ok {
+			return ast.WalkContinue, nil
+		}
+		links = append(links, &Link{FileName: filename, URL: string(link.Destination), Count: 1})
+		return ast.WalkSkipChildren, nil
 	}); err != nil {
 		return nil, err
 	}
