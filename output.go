@@ -20,7 +20,7 @@ func output(m map[string]map[string]*Link, format string, flat bool) error {
 			return links[i].Filename < links[j].Filename || (links[i].Filename == links[j].Filename && links[i].Destination < links[j].Destination)
 		})
 		for _, l := range links {
-			if l.ErrMsg != "" {
+			if l.ErrMsg == "" {
 				l.ErrMsg = "OK"
 			}
 			fmt.Printf("%s\t%s\t%d\t%d\t%s\n", l.Filename, l.Destination, l.Count, l.StatusCode, l.ErrMsg)
