@@ -21,17 +21,18 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 		wg.Add(1)
 		go func(l *Link) {
 			defer wg.Done()
-			if _, ok := m[l.Filename]; !ok {
+			if _, ok := m[l.Filename]; !ok { // initalize map
 				mu.Lock()
 				m[l.Filename] = map[string]*Link{}
 				mu.Unlock()
-			} else if _, ok := m[l.Filename][l.Destination]; ok {
+			} else if _, ok := m[l.Filename][l.Destination]; ok { // increment existing link's count
 				mu.Lock()
 				m[l.Filename][l.Destination].Count++
 				mu.Unlock()
 				return
 			}
 
+			// Insert a new link
 			sc, err := check(l)
 			l.Count = 1
 			l.StatusCode = sc
