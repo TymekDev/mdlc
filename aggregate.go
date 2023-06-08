@@ -21,24 +21,21 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 		wg.Add(1)
 		go func(l *Link) {
 			defer wg.Done()
+			mu.Lock()
 			if _, ok := m[l.Filename]; !ok { // initalize map
-				mu.Lock()
 				m[l.Filename] = map[string]*Link{}
-				mu.Unlock()
-			} else if _, ok := m[l.Filename][l.Destination]; ok { // increment existing link's count
-				mu.Lock()
-				m[l.Filename][l.Destination].Count++
-				mu.Unlock()
-				return
 			}
+			if _, ok := m[l.Filename][l.Destination]; !ok { // increment existing link's count
+				m[l.Filename][l.Destination] = l
+			}
+			m[l.Filename][l.Destination].Count++
+			mu.Unlock()
 
 			// Insert a new link
-			mu.Lock()
 			sc, err := check(l) // PERF: we could cache responses in case one link appears in multiple files
-			l.Count = 1
+			mu.Lock()
 			l.StatusCode = sc
 			l.Err = err
-			m[l.Filename][l.Destination] = l
 			mu.Unlock()
 		}(link)
 	}
