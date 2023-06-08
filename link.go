@@ -19,7 +19,7 @@ func (l Links) String() string {
 }
 
 type Link struct {
-	FileName   string
+	Filename   string
 	URL        string
 	Count      int
 	StatusCode int
@@ -28,7 +28,7 @@ type Link struct {
 
 func (l *Link) String() string {
 	parts := []string{
-		l.FileName,
+		l.Filename,
 		l.URL,
 		strconv.Itoa(l.Count),
 		strconv.Itoa(l.StatusCode),
@@ -42,5 +42,5 @@ func (l *Link) String() string {
 }
 
 func (l *Link) Less(other *Link) bool {
-	return l.FileName < other.FileName || (l.FileName == other.FileName && l.URL < other.URL)
+	return l.Filename < other.Filename || (l.Filename == other.Filename && l.URL < other.URL)
 }

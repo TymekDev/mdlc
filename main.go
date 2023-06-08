@@ -105,7 +105,7 @@ func parseFileForLinks(filename string) (Links, error) {
 		if !ok {
 			return ast.WalkContinue, nil
 		}
-		links = append(links, &Link{FileName: filename, URL: string(link.Destination), Count: 1})
+		links = append(links, &Link{Filename: filename, URL: string(link.Destination), Count: 1})
 		return ast.WalkSkipChildren, nil
 	}); err != nil {
 		return nil, err
