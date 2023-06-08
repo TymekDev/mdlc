@@ -16,11 +16,10 @@ func output(m map[string]map[string]*Link, format string) error {
 			return links[i].Filename < links[j].Filename || (links[i].Filename == links[j].Filename && links[i].Destination < links[j].Destination)
 		})
 		for _, l := range links {
-			if l.Err != nil {
-				fmt.Printf("%s\t%s\t%d\t%d\t%s\n", l.Filename, l.Destination, l.Count, l.StatusCode, l.Err)
-				continue
+			if l.ErrMsg != "" {
+				l.ErrMsg = "OK"
 			}
-			fmt.Printf("%s\t%s\t%d\t%d\tOK\n", l.Filename, l.Destination, l.Count, l.StatusCode)
+			fmt.Printf("%s\t%s\t%d\t%d\t%s\n", l.Filename, l.Destination, l.Count, l.StatusCode, l.ErrMsg)
 		}
 	default:
 		return fmt.Errorf("unsupported format: '%s'", format)

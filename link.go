@@ -10,17 +10,17 @@ type Link struct {
 	Destination string
 	Count       int
 	StatusCode  int
-	Err         error
+	ErrMsg      string
 }
 
 // NOTE: check isn't a method to pre
-func (l Link) check() (int, error) {
+func (l Link) check() (int, string) {
 	resp, err := http.Head(l.Destination)
 	if err != nil {
-		return 0, err
+		return 0, ""
 	}
 	if url := resp.Request.URL.String(); url != l.Destination {
-		return resp.StatusCode, fmt.Errorf("indirect URL to: %s", url)
+		return resp.StatusCode, fmt.Sprintf("indirect URL to: %s", url)
 	}
-	return resp.StatusCode, nil
+	return resp.StatusCode, ""
 }

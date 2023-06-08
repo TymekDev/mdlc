@@ -32,10 +32,10 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			mu.Unlock()
 
 			// Insert a new link
-			sc, err := l.check() // PERF: we could cache responses in case one link appears in multiple files
+			sc, errMsg := l.check() // PERF: we could cache responses in case one link appears in multiple files
 			mu.Lock()
 			l.StatusCode = sc
-			l.Err = err
+			l.ErrMsg = errMsg
 			mu.Unlock()
 		}(link)
 	}
