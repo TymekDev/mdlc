@@ -8,12 +8,21 @@ import (
 
 var version string
 
+const description = `mdlc - Markdown Link Checker
+
+Description:
+  mdlc scans markdown files for links and checks their status using a HTTP HEAD
+  request. This includes checking both, status code and any redirects.
+
+Notes:
+  mdlc does not verify whether fragment URLs (starting with '#') are correct.`
+
 func main() {
 	log.SetFlags(0)
 
 	cmd := &cobra.Command{
 		Use:     "mdlc [flags] file [...]",
-		Short:   "mdlc - Markdown Link Checker",
+		Short:   description,
 		Version: version,
 		Args:    cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

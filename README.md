@@ -3,6 +3,8 @@
 mdlc scans markdown files for links and checks their status using a HTTP HEAD request.
 This includes checking both, status code and any redirects.
 
+Note: mdlc does not verify whether fragment URLs (starting with '#') are correct.
+
 ## Installation
 Run `make` to compile `mdlc`.
 Run `make install` to install `mdlc` and completions to `/usr/local/`.
@@ -13,6 +15,13 @@ To override `/usr/local/` PREFIX variable use `make -e PREFIX=/foo/bar/baz/`.
 ## Usage
 ```
 mdlc - Markdown Link Checker
+
+Description:
+  mdlc scans markdown files for links and checks their status using a HTTP HEAD
+  request. This includes checking both, status code and any redirects.
+
+Notes:
+  mdlc does not verify whether fragment URLs (starting with '#') are correct.
 
 Usage:
   mdlc [flags] file [...]
