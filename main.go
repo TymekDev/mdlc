@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -16,14 +15,16 @@ func main() {
 		Use:     "mdlc [flags] file [...]",
 		Short:   "mdlc - Markdown Link Checker",
 		Version: version,
-		// CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
-		Args: cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(aggregate(args))
+		Args:    cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			f, err := cmd.Flags().GetString("format")
+			if err != nil {
+				return err
+			}
+			return output(aggregate(args), f)
 		},
 	}
 
-	if err := cmd.Execute(); err != nil {
-		log.Fatalln(err)
-	}
+	cmd.Flags().String("format", "json", "output `format`: json or tsv")
+	_ = cmd.Execute()
 }

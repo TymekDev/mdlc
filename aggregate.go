@@ -33,7 +33,7 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			}
 
 			// Insert a new link
-			sc, err := check(l)
+			sc, err := check(l) // PERF: we could cache responses in case one link appears in multiple files
 			l.Count = 1
 			l.StatusCode = sc
 			l.Err = err
