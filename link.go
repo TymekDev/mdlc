@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -43,4 +45,15 @@ func (l *Link) String() string {
 
 func (l *Link) Less(other *Link) bool {
 	return l.Filename < other.Filename || (l.Filename == other.Filename && l.URL < other.URL)
+}
+
+func check(l *Link) (int, error) {
+	resp, err := http.Head(l.URL)
+	if err != nil {
+		return 0, err
+	}
+	if url := resp.Request.URL.String(); url != l.URL {
+		return resp.StatusCode, fmt.Errorf("indirect URL to: %s", url)
+	}
+	return resp.StatusCode, nil
 }

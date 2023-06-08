@@ -4,9 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
-	"sort"
 	"sync"
 
 	"github.com/yuin/goldmark"
@@ -32,83 +30,75 @@ func main() {
 		return
 	}
 
-	all, err := parseFilesForLinks(flag.Args())
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println(aggregate(flag.Args()))
+}
 
-	// Check and count URLs
-	mu := sync.Mutex{}
+func aggregate(filenames []string) map[string]map[string]*Link {
+	ch := make(chan *Link)
+	go collect(ch, filenames)
+
+	m := map[string]map[string]*Link{}
+	mu := sync.Mutex{} // PERF: we could have a mutex per inner map lock instead of a global one
 	wg := sync.WaitGroup{}
-	unique := Links{}
-	m := map[string]int{}
-	for _, link := range all {
-		if idx, ok := m[link.URL]; ok {
-			unique[idx].Count++
-			continue
-		}
-
-		m[link.URL] = len(unique)
-		unique = append(unique, link)
-
+	for link := range ch {
 		wg.Add(1)
-		go func(i int) {
+		go func(l *Link) {
 			defer wg.Done()
-			link := unique[i]
-			resp, err := http.Head(link.URL)
-			defer mu.Unlock()
-			mu.Lock()
-			if err != nil {
-				link.Err = err
+			if _, ok := m[l.Filename]; !ok {
+				mu.Lock()
+				m[l.Filename] = map[string]*Link{}
+				mu.Unlock()
+			} else if _, ok := m[l.Filename][l.URL]; ok {
+				mu.Lock()
+				m[l.Filename][l.URL].Count++
+				mu.Unlock()
 				return
 			}
-			link.StatusCode = resp.StatusCode
-			if url := resp.Request.URL.String(); url != link.URL {
-				link.Err = fmt.Errorf("indirect URL to: %s", url)
-			}
-		}(len(unique) - 1)
+
+			sc, err := check(l)
+			l.Count = 1
+			l.StatusCode = sc
+			l.Err = err
+			mu.Lock()
+			m[l.Filename][l.URL] = l
+			mu.Unlock()
+		}(link)
 	}
 	wg.Wait()
 
-	sort.Slice(unique, func(i, j int) bool {
-		return unique[i].Less(unique[j])
-	})
-
-	fmt.Println(unique)
+	return m
 }
 
-func parseFilesForLinks(filenames []string) (Links, error) {
-	result := Links{}
+func collect(ch chan *Link, filenames []string) {
+	wg := sync.WaitGroup{}
 	for _, filename := range filenames {
-		links, err := parseFileForLinks(filename)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, links...)
+		wg.Add(1)
+		go func(filename string) {
+			defer wg.Done()
+			readAndTraverse(ch, filename)
+		}(filename)
 	}
-	return result, nil
+	wg.Wait()
+	close(ch) // Close once all files have been read
 }
 
-func parseFileForLinks(filename string) (Links, error) {
+func readAndTraverse(ch chan *Link, filename string) {
 	b, err := os.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return
 	}
 
-	links := Links{}
 	document := goldmark.DefaultParser().Parse(text.NewReader(b))
-	if err := ast.Walk(document, func(n ast.Node, enter bool) (ast.WalkStatus, error) {
+	_ = ast.Walk(document, func(n ast.Node, enter bool) (ast.WalkStatus, error) {
 		if !enter {
 			return ast.WalkContinue, nil
 		}
 		link, ok := n.(*ast.Link)
-		if !ok {
-			return ast.WalkContinue, nil
+		if ok {
+			ch <- &Link{Filename: filename, URL: string(link.Destination)}
+			return ast.WalkSkipChildren, nil
 		}
-		links = append(links, &Link{Filename: filename, URL: string(link.Destination), Count: 1})
-		return ast.WalkSkipChildren, nil
-	}); err != nil {
-		return nil, err
-	}
-	return links, nil
+		return ast.WalkContinue, nil
+	})
 }
