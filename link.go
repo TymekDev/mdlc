@@ -6,11 +6,11 @@ import (
 )
 
 type Link struct {
-	Filename    string
-	Destination string
-	Count       int
-	StatusCode  int
-	ErrMsg      string
+	Filename    string `json:"filename"`
+	Destination string `json:"destination"`
+	Count       int    `json:"count"`
+	StatusCode  int    `json:"status_code"`
+	ErrMsg      string `json:"error,omitempty"`
 }
 
 // NOTE: check isn't a method to pre

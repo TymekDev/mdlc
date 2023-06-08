@@ -1,15 +1,16 @@
 package main
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
+	"os"
 	"sort"
 )
 
 func output(m map[string]map[string]*Link, format string) error {
 	switch format {
 	case "json":
-		return errors.New("not implemented")
+		return json.NewEncoder(os.Stdout).Encode(m)
 	case "tsv":
 		links := flatten(m)
 		sort.Slice(links, func(i, j int) bool { // sort by filename and then by destination
