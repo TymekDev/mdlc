@@ -17,14 +17,19 @@ func main() {
 		Version: version,
 		Args:    cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			f, err := cmd.Flags().GetString("format")
+			format, err := cmd.Flags().GetString("format")
 			if err != nil {
 				return err
 			}
-			return output(aggregate(args), f)
+			flat, err := cmd.Flags().GetBool("flat")
+			if err != nil {
+				return err
+			}
+			return output(aggregate(args), format, flat)
 		},
 	}
 
 	cmd.Flags().String("format", "json", "output `format`: json or tsv")
+	cmd.Flags().Bool("flat", false, "flatten JSON output to a single array")
 	_ = cmd.Execute()
 }

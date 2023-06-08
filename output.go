@@ -7,9 +7,12 @@ import (
 	"sort"
 )
 
-func output(m map[string]map[string]*Link, format string) error {
+func output(m map[string]map[string]*Link, format string, flat bool) error {
 	switch format {
 	case "json":
+		if flat {
+			return json.NewEncoder(os.Stdout).Encode(flatten(m))
+		}
 		return json.NewEncoder(os.Stdout).Encode(m)
 	case "tsv":
 		links := flatten(m)
