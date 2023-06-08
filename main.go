@@ -1,36 +1,36 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
 	"sync"
 
+	"github.com/spf13/cobra"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
 )
 
-var (
-	version  string
-	fVersion bool
-)
+var version string
 
 func main() {
 	log.SetFlags(0)
 
-	if version != "" {
-		flag.BoolVar(&fVersion, "version", false, "version for mdlc")
+	cmd := &cobra.Command{
+		Use:     "mdlc [flags] file [...]",
+		Short:   "mdlc - Markdown Link Checker",
+		Version: version,
+		// CompletionOptions: cobra.CompletionOptions{HiddenDefaultCmd: true},
+		Args: cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(aggregate(args))
+		},
 	}
-	flag.Parse()
 
-	if fVersion {
-		fmt.Printf("mdlc version %s\n", version)
-		return
+	if err := cmd.Execute(); err != nil {
+		log.Fatalln(err)
 	}
-
-	fmt.Println(aggregate(flag.Args()))
 }
 
 func aggregate(filenames []string) map[string]map[string]*Link {
