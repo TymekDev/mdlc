@@ -21,17 +21,17 @@ func (l Links) String() string {
 }
 
 type Link struct {
-	Filename   string
-	URL        string
-	Count      int
-	StatusCode int
-	Err        error
+	Filename    string
+	Destination string
+	Count       int
+	StatusCode  int
+	Err         error
 }
 
 func (l *Link) String() string {
 	parts := []string{
 		l.Filename,
-		l.URL,
+		l.Destination,
 		strconv.Itoa(l.Count),
 		strconv.Itoa(l.StatusCode),
 	}
@@ -44,15 +44,15 @@ func (l *Link) String() string {
 }
 
 func (l *Link) Less(other *Link) bool {
-	return l.Filename < other.Filename || (l.Filename == other.Filename && l.URL < other.URL)
+	return l.Filename < other.Filename || (l.Filename == other.Filename && l.Destination < other.Destination)
 }
 
 func check(l *Link) (int, error) {
-	resp, err := http.Head(l.URL)
+	resp, err := http.Head(l.Destination)
 	if err != nil {
 		return 0, err
 	}
-	if url := resp.Request.URL.String(); url != l.URL {
+	if url := resp.Request.URL.String(); url != l.Destination {
 		return resp.StatusCode, fmt.Errorf("indirect URL to: %s", url)
 	}
 	return resp.StatusCode, nil

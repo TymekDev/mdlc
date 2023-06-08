@@ -48,9 +48,9 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 				mu.Lock()
 				m[l.Filename] = map[string]*Link{}
 				mu.Unlock()
-			} else if _, ok := m[l.Filename][l.URL]; ok {
+			} else if _, ok := m[l.Filename][l.Destination]; ok {
 				mu.Lock()
-				m[l.Filename][l.URL].Count++
+				m[l.Filename][l.Destination].Count++
 				mu.Unlock()
 				return
 			}
@@ -60,7 +60,7 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			l.StatusCode = sc
 			l.Err = err
 			mu.Lock()
-			m[l.Filename][l.URL] = l
+			m[l.Filename][l.Destination] = l
 			mu.Unlock()
 		}(link)
 	}
@@ -96,7 +96,7 @@ func readAndTraverse(ch chan *Link, filename string) {
 		}
 		link, ok := n.(*ast.Link)
 		if ok {
-			ch <- &Link{Filename: filename, URL: string(link.Destination)}
+			ch <- &Link{Filename: filename, Destination: string(link.Destination)}
 			return ast.WalkSkipChildren, nil
 		}
 		return ast.WalkContinue, nil
