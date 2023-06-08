@@ -34,4 +34,4 @@ Flags:
 ```
 
 ## Name
-\[M\]ark\[d\]own \[l\]ink \[c\]hecker.
+\[M\]ark\[d\]own \[L\]ink \[C\]hecker.
