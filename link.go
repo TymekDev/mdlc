@@ -13,7 +13,8 @@ type Link struct {
 	Err         error
 }
 
-func check(l *Link) (int, error) {
+// NOTE: check isn't a method to pre
+func (l Link) check() (int, error) {
 	resp, err := http.Head(l.Destination)
 	if err != nil {
 		return 0, err
