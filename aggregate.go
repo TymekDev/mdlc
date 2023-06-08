@@ -31,6 +31,10 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			m[l.Filename][l.Destination].Count++
 			mu.Unlock()
 
+			if l.Destination[0] == '#' {
+				return
+			}
+
 			// Insert a new link
 			sc, errMsg := l.check() // PERF: we could cache responses in case one link appears in multiple files
 			mu.Lock()
