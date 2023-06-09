@@ -36,9 +36,6 @@ func output(m map[string]map[string]*Link, format string, flat bool) error {
 			return links[i].Filename < links[j].Filename || (links[i].Filename == links[j].Filename && links[i].Destination < links[j].Destination)
 		})
 		for _, l := range links {
-			if l.ErrMsg == "" {
-				l.ErrMsg = "OK"
-			}
 			fmt.Printf("%-*s\t%-*s\t%d\t%d\t%-*s\n", colFilename, l.Filename, colDestination, l.Destination, l.Count, l.StatusCode, colErrMsg, l.ErrMsg)
 		}
 	default:

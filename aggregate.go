@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/yuin/goldmark"
@@ -56,9 +58,10 @@ func checkURL(url string) (int, string) {
 		return 0, err.Error()
 	}
 	if trueURL := resp.Request.URL.String(); trueURL != url {
-		return resp.StatusCode, fmt.Sprintf("indirect URL to: %s", trueURL)
+		return resp.StatusCode, fmt.Sprintf("Indirect URL to: %s", trueURL)
 	}
-	return resp.StatusCode, ""
+	_, status, _ := strings.Cut(resp.Status, " ")
+	return resp.StatusCode, status
 }
 
 func collect(ch chan *Link, filenames []string) {
