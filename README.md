@@ -37,7 +37,7 @@ Flags:
 
 ## Examples
 Given a following `README.md`:
-```md
+```markdown
 [byocss](https://sr.ht/~tymek/byocss) is a batteries excluded [Hugo](https://gohugo.io) theme.
 It provides semantic HTML layout without any styling (see an example at [byocss.tymek.dev](https://byocss.tymek.dev)).
 Only one CSS class and two IDs are used throughout byocss! IDs also double down as anchors for sections.
@@ -51,7 +51,7 @@ README.md	https://sr.ht/~tymek/byocss	1	200	Indirect URL to: https://sr.ht/~tyme
 ```
 
 mdlc handles link aliases too:
-```md
+```markdown
 Here is an [example link] and [another], twice: [another]. [This errors](incorrect#content). [This gets ignored](#content)
 
 [example link]: https://example.com
