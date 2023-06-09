@@ -65,5 +65,7 @@ Output:
 -       incorrect#content               1       0       Head "incorrect#content": unsupported protocol scheme ""
 ```
 
+Note: '-' come from the input being passed via stdin.
+
 ## Name
 \[M\]ark\[d\]own \[L\]ink \[C\]hecker.
