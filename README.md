@@ -52,7 +52,7 @@ README.md	https://sr.ht/~tymek/byocss	1	200	Indirect URL to: https://sr.ht/~tyme
 
 mdlc handles link aliases too:
 ```markdown
-Here is an [example link] and [another], twice: [another]. [This errors](incorrect#content). [This gets ignored](#content)
+Here is an [example link][] and [another][], twice: [another][]. [This errors](incorrect#content). [This gets ignored](#content)
 
 [example link]: https://example.com
 [another]: https://example.com/another
