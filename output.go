@@ -8,7 +8,7 @@ import (
 )
 
 func output(m map[string]map[string]*Link, format string, flat bool) error {
-	var colFilename, colDestination, colErrMsg int
+	var colFilename, colDestination int
 	switch format {
 	case "json":
 		if flat {
@@ -20,12 +20,9 @@ func output(m map[string]map[string]*Link, format string, flat bool) error {
 			if n := len(filename); n > colFilename {
 				colFilename = n
 			}
-			for destination, link := range links {
+			for destination := range links {
 				if n := len(destination); n > colDestination {
 					colDestination = n
-				}
-				if n := len(link.ErrMsg); n > colErrMsg {
-					colErrMsg = n
 				}
 			}
 		}
@@ -36,7 +33,7 @@ func output(m map[string]map[string]*Link, format string, flat bool) error {
 			return links[i].Filename < links[j].Filename || (links[i].Filename == links[j].Filename && links[i].Destination < links[j].Destination)
 		})
 		for _, l := range links {
-			fmt.Printf("%-*s\t%-*s\t%d\t%d\t%-*s\n", colFilename, l.Filename, colDestination, l.Destination, l.Count, l.StatusCode, colErrMsg, l.ErrMsg)
+			fmt.Printf("%-*s\t%-*s\t%d\t%d\t%s\n", colFilename, l.Filename, colDestination, l.Destination, l.Count, l.StatusCode, l.ErrMsg)
 		}
 	default:
 		return fmt.Errorf("unsupported format: '%s'", format)
