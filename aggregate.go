@@ -17,7 +17,7 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 	go collect(ch, filenames)
 
 	m := map[string]map[string]*Link{}
-	mu := sync.Mutex{} // PERF: we could have a mutex per inner map lock instead of a global one
+	mu := sync.Mutex{} // PERF: we could have a mutex per inner map instead of a global one
 	wg := sync.WaitGroup{}
 	for link := range ch {
 		wg.Add(1)
