@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 
@@ -36,7 +38,7 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			}
 
 			// Insert a new link
-			sc, errMsg := l.check() // PERF: we could cache responses in case one link appears in multiple files
+			sc, errMsg := checkURL(l.Destination) // PERF: we could cache responses in case one link appears in multiple files
 			mu.Lock()
 			l.StatusCode = sc
 			l.ErrMsg = errMsg
@@ -46,6 +48,17 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 	wg.Wait()
 
 	return m
+}
+
+func checkURL(url string) (int, string) {
+	resp, err := http.Head(url)
+	if err != nil {
+		return 0, err.Error()
+	}
+	if trueURL := resp.Request.URL.String(); trueURL != url {
+		return resp.StatusCode, fmt.Sprintf("indirect URL to: %s", trueURL)
+	}
+	return resp.StatusCode, ""
 }
 
 func collect(ch chan *Link, filenames []string) {
