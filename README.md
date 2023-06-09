@@ -36,17 +36,18 @@ Flags:
 ```
 
 ## Examples
+Given a following `README.md`:
 ```md
 [byocss](https://sr.ht/~tymek/byocss) is a batteries excluded [Hugo](https://gohugo.io) theme.
 It provides semantic HTML layout without any styling (see an example at [byocss.tymek.dev](https://byocss.tymek.dev)).
 Only one CSS class and two IDs are used throughout byocss! IDs also double down as anchors for sections.
 **If you know CSS and want to heavily customize a theme without building it from scratch, then byocss is for you!**
 ```
-Running mdlc on the markdown excerpt above yields the following output:
+Running `mdlc README.md` yields the following output:
 ```
--	https://byocss.tymek.dev   	1	200	OK
--	https://gohugo.io          	1	200	OK
--	https://sr.ht/~tymek/byocss	1	200	Indirect URL to: https://sr.ht/~tymek/byocss/
+README.md	https://byocss.tymek.dev   	1	200	OK
+README.md	https://gohugo.io          	1	200	OK
+README.md	https://sr.ht/~tymek/byocss	1	200	Indirect URL to: https://sr.ht/~tymek/byocss/
 ```
 
 mdlc handles link aliases too:
