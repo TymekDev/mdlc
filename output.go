@@ -8,12 +8,28 @@ import (
 )
 
 func output(m map[string]map[string]*Link, format string, flat bool) error {
+	var colFilename, colDestination, colErrMsg int
 	switch format {
 	case "json":
 		if flat {
 			return json.NewEncoder(os.Stdout).Encode(flatten(m))
 		}
 		return json.NewEncoder(os.Stdout).Encode(m)
+	case "columns":
+		for filename, links := range m {
+			if n := len(filename); n > colFilename {
+				colFilename = n
+			}
+			for destination, link := range links {
+				if n := len(destination); n > colDestination {
+					colDestination = n
+				}
+				if n := len(link.ErrMsg); n > colErrMsg {
+					colErrMsg = n
+				}
+			}
+		}
+		fallthrough
 	case "tsv":
 		links := flatten(m)
 		sort.Slice(links, func(i, j int) bool { // sort by filename and then by destination
@@ -23,7 +39,7 @@ func output(m map[string]map[string]*Link, format string, flat bool) error {
 			if l.ErrMsg == "" {
 				l.ErrMsg = "OK"
 			}
-			fmt.Printf("%s\t%s\t%d\t%d\t%s\n", l.Filename, l.Destination, l.Count, l.StatusCode, l.ErrMsg)
+			fmt.Printf("%-*s\t%-*s\t%d\t%d\t%-*s\n", colFilename, l.Filename, colDestination, l.Destination, l.Count, l.StatusCode, colErrMsg, l.ErrMsg)
 		}
 	default:
 		return fmt.Errorf("unsupported format: '%s'", format)

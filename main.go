@@ -38,7 +38,7 @@ func main() {
 		},
 	}
 
-	cmd.Flags().String("format", "tsv", "output `format`: tsv or json")
+	cmd.Flags().String("format", "columns", "output `format`: columns, json, or tsv")
 	cmd.Flags().Bool("flat", false, "flatten JSON output to a single array")
 	_ = cmd.Execute()
 }
