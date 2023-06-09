@@ -15,7 +15,9 @@ Description:
   request. This includes checking both, status code and any redirects.
 
 Notes:
-  mdlc does not verify whether fragment URLs (starting with '#') are correct.`
+  - mdlc does not verify whether fragment URLs (starting with '#') are correct.
+  - '-' can be used as a file to read from stdin. Using it multiple times has
+    no effect past the first occurence.`
 
 func main() {
 	log.SetFlags(0)

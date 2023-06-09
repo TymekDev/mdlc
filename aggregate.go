@@ -78,10 +78,17 @@ func collect(ch chan *Link, filenames []string) {
 }
 
 func readAndTraverse(ch chan *Link, filename string) {
-	b, err := os.ReadFile(filename)
+	var (
+		b   []byte
+		err error
+	)
+	if filename == "-" {
+		b, err = io.ReadAll(os.Stdin)
+	} else {
+		b, err = os.ReadFile(filename)
+	}
 	if err != nil {
 		log.Println(err)
-		return
 	}
 
 	document := goldmark.DefaultParser().Parse(text.NewReader(b))
