@@ -36,6 +36,9 @@ func aggregate(filenames []string) map[string]map[string]*Link {
 			mu.Unlock()
 
 			if l.Destination[0] == '#' {
+				mu.Lock()
+				l.ErrMsg = "Skip: fragment URL"
+				mu.Unlock()
 				return
 			}
 
