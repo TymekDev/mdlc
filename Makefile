@@ -1,12 +1,11 @@
+SHELL = /bin/sh
+
 PREFIX = /usr/local
+
 
 .PHONY: mdlc
 mdlc:
 	 go build -ldflags "-X main.version=$$(git describe --always --dirty)" .
-
-.PHONY: clean
-clean: 
-	rm -f mdlc
 
 .PHONY: install
 install:
@@ -19,3 +18,7 @@ install:
 uninstall:
 	rm -f \
 		$(PREFIX)/bin/mdlc
+
+.PHONY: clean
+clean: 
+	rm -f mdlc
