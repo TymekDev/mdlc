@@ -1,4 +1,4 @@
-module git.sr.ht/~tymek/mdlc
+module github.com/TymekDev/mdlc
 
 go 1.20
 
